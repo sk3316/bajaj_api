@@ -1,3 +1,4 @@
+
 {
     "version": 2,
     "builds": [
@@ -6,5 +7,4 @@
     "routes": [
       { "src": "/bfhl", "dest": "/index.js" }
     ]
-  }
-  
+}
