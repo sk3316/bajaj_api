@@ -1,49 +1,50 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
 const app = express();
-app.use(cors()); // Enable CORS
+const port = process.env.PORT || 3000;
+
 app.use(bodyParser.json());
 
-const user_id = 'shitanshu_priyadarshi_26052004';
-const email = 'sk3316@srmist.edu.in';
-const roll_number = 'RA2111033010107';
+// Helper function to separate numbers and alphabets
+function processData(data) {
+    const numbers = data.filter(item => !isNaN(item));
+    const alphabets = data.filter(item => isNaN(item));
+    const highestAlphabet = alphabets.length > 0 
+        ? [alphabets.sort((a, b) => a.toLowerCase() > b.toLowerCase() ? 1 : -1).pop()]
+        : [];
+    return { numbers, alphabets, highestAlphabet };
+}
 
+// POST route to process data
 app.post('/bfhl', (req, res) => {
-    try {
-        const data = req.body.data;
-        if (!Array.isArray(data)) {
-            throw new Error('Invalid data format');
-        }
+    const { data } = req.body;
 
-        const numbers = data.filter(item => !isNaN(item));
-        const alphabets = data.filter(item => isNaN(item));
-        const highest_alphabet = alphabets.length > 0 ? [alphabets.sort().pop()] : [];
-
-        res.json({
-            is_success: true,
-            user_id,
-            email,
-            roll_number,
-            numbers,
-            alphabets,
-            highest_alphabet
-        });
-    } catch (error) {
-        console.error('Error processing request:', error.message);
-        res.status(500).json({
-            is_success: false,
-            message: error.message
-        });
+    if (!data || !Array.isArray(data)) {
+        return res.status(400).json({ is_success: false, message: 'Invalid input format' });
     }
+
+    const { numbers, alphabets, highestAlphabet } = processData(data);
+
+    const response = {
+        is_success: true,
+        user_id: "shitanshu_priyadarshi_26052004", 
+        email: "sk3316@srmist.edu.in",
+        roll_number: "RA2111033010107",
+        numbers,
+        alphabets,
+        highest_alphabet: highestAlphabet
+    };
+
+    res.json(response);
 });
 
+// GET route to return the operation code
 app.get('/bfhl', (req, res) => {
     res.json({ operation_code: 1 });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
