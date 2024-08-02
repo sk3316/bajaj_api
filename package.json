@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.19.2",
     "vercel": "^35.2.2"
   }
